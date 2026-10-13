@@ -1,0 +1,9 @@
+{
+  "name": "KINESIS — Explore Goa. Travel Smarter.",
+  "short_name": "KINESIS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3ec",
+  "theme_color": "#f7f3ec",
+  "description": "A mobile-first Goa public transport assistant prototype."
+}
