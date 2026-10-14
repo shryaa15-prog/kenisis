@@ -4,17 +4,21 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
-    "api/index.js": {
-      "includeFiles": "server/data/**"
-    },
-    "api/[...path].js": {
+    "api/**/*.js": {
       "includeFiles": "server/data/**"
     }
   },
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/index.html",
+      "missing": [
+        {
+          "type": "header",
+          "key": "x-api-request",
+          "value": "true"
+        }
+      ]
     }
   ]
 }
