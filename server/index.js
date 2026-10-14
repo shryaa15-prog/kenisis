@@ -64,7 +64,7 @@ const ctxFrom = (lat, lon, now) => ({ here: lat && lon ? { lat: +lat, lon: +lon 
 const send = (res, code, body) => { res.writeHead(code, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' }); res.end(JSON.stringify(body)); };
 const readBody = req => new Promise((ok, no) => { let b = ''; req.on('data', c => { b += c; if (b.length > 1e5) req.destroy(); }); req.on('end', () => { try { ok(JSON.parse(b || '{}')); } catch (e) { no(e); } }); });
 
-http.createServer(async (req, res) => {
+export async function handler(req, res) {
   if (req.method === 'OPTIONS') return send(res, 204, {});
   if (req.url === '/api/health') return send(res, 200, { ok: true, ai: !!KEY, model: KEY ? MODEL : null, ...stats });
   if (req.url === '/api/ask' && req.method === 'POST') {
@@ -90,5 +90,14 @@ http.createServer(async (req, res) => {
     if (!parsed) parsed = parseText(text);
     return send(res, 200, { ...buildPlan(parsed, defaultOrigin, when, { here, nowMin: Number.isFinite(+nowMin) && nowMin !== null && nowMin !== '' ? +nowMin : undefined }), mode });
   }
+  
   send(res, 404, { error: 'not found' });
-}).listen(PORT, () => console.log(`Kinesis API on :${PORT} (${KEY ? MODEL : 'fallback mode — set GEMINI_API_KEY'})`));
+}
+
+if (process.env.VERCEL !== '1') {
+  http.createServer(handler).listen(PORT, () => {
+    console.log(
+      `Kinesis API on :${PORT} (${KEY ? MODEL : 'fallback mode'})`
+    );
+  });
+}
