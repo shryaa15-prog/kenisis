@@ -1,0 +1,36 @@
+CHANGES NEEDED IN YOUR SERVER CODE (server/ folder)
+
+1) Your Express app must be exported from server/app.js, and listen() must not run on Vercel.
+
+   CommonJS version:
+
+   const express = require("express");
+   const app = express();
+   // ... your middleware and routes, mounted under /api ...
+   module.exports = app;
+
+   if (process.env.NODE_ENV !== "production") {
+     app.listen(process.env.PORT || 5000, () => console.log("Server running"));
+   }
+
+   ES module version:
+
+   import express from "express";
+   const app = express();
+   // ... your middleware and routes, mounted under /api ...
+   export default app;
+
+   if (process.env.NODE_ENV !== "production") {
+     app.listen(process.env.PORT || 5000, () => console.log("Server running"));
+   }
+
+2) All routes must start with /api, e.g. app.use("/api", router) or app.get("/api/hello", ...).
+
+3) In your React code, call "/api/..." instead of "http://localhost:5000/...".
+
+4) For local development, add this to vite.config.js so /api reaches your local server:
+
+   export default defineConfig({
+     plugins: [react()],
+     server: { proxy: { "/api": "http://localhost:5000" } },
+   });

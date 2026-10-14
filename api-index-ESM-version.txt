@@ -1,0 +1,8 @@
+USE THIS ONLY IF your package.json contains "type": "module".
+In that case, replace the contents of api/index.js with the code below.
+
+export default async function handler(req, res) {
+  const mod = await import("../server/app.js");
+  const app = mod.default || mod;
+  return app(req, res);
+}
